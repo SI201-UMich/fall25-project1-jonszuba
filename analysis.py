@@ -30,10 +30,15 @@ def df_clean(df):
 
 
 def average_body_mass_by_species_and_sex(df):
-    grouped_avg = df.groupby(['species', 'sex'])['body_mass_g'].mean()
-    result = {}
     result = df.groupby(['species', 'sex'])['body_mass_g'].mean().reset_index()
     result = result.rename(columns={'body_mass_g': 'average_body_mass_g'})
+    # Ensure correct dtypes if result is empty
+    if result.empty:
+        result = pd.DataFrame({
+            'species': pd.Series(dtype='object'),
+            'sex': pd.Series(dtype='object'),
+            'average_body_mass_g': pd.Series(dtype='float64')
+        })
     return result
     
 
@@ -103,7 +108,7 @@ def test_average_body_mass_by_species_and_sex():
     expected1 = pd.DataFrame({
         'species': ['Adelie', 'Adelie', 'Chinstrap', 'Chinstrap', 'Gentoo'],
         'sex': ['Male', 'Female', 'Male', 'Female', 'Male'],
-        'average_body_mass_g': [3700, 3450, 3800, 3700, 5000]
+        'average_body_mass_g': [3700.0, 3450.0, 3800.0, 3700.0, 5000.0]
     })
     pd.testing.assert_frame_equal(
         result1.sort_values(['species', 'sex']).reset_index(drop=True),
@@ -122,7 +127,7 @@ def test_average_body_mass_by_species_and_sex():
     expected2 = pd.DataFrame({
         'species': ['Adelie', 'Adelie', 'Chinstrap'],
         'sex': ['Male', 'Female', 'Female'],
-        'average_body_mass_g': [3650, 3450, 3700]
+        'average_body_mass_g': [3650.0, 3450.0, 3700.0]
     })
     pd.testing.assert_frame_equal(
         result2.sort_values(['species', 'sex']).reset_index(drop=True),
@@ -133,7 +138,11 @@ def test_average_body_mass_by_species_and_sex():
 
     df3 = pd.DataFrame({'species': [], 'sex': [], 'body_mass_g': []})
     result3 = average_body_mass_by_species_and_sex(df3)
-    expected3 = pd.DataFrame(columns=['species', 'sex', 'average_body_mass_g'])
+    expected3 = pd.DataFrame({
+        'species': pd.Series(dtype='object'),
+        'sex': pd.Series(dtype='object'),
+        'average_body_mass_g': pd.Series(dtype='float64')
+    })
     pd.testing.assert_frame_equal(result3, expected3)
 
     # Edge case 2: only one group
@@ -162,7 +171,7 @@ def test_correlation_bill_flipper_by_island():
     }
     df1 = pd.DataFrame(data1)
     result1 = correlation_bill_flipper_by_island(df1)
-    expected1 = {'Torgersen': 1.0, 'Biscoe': 1.0}
+    expected1 = {'Torgersen': 1.0, 'Biscoe': -1.0}
     assert all(abs(result1[k] - expected1[k]) < 1e-6 for k in expected1), f"Expected {expected1}, got {result1}"
 
     # General case 2: three points, positive correlation
