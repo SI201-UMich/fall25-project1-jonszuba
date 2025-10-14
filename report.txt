@@ -4,10 +4,10 @@ Correlation between Bill Length and Flipper Length by Island:
   Torgersen: 0.410
 
 Average Body Mass by Species and Sex:
-  species    sex  average_body_mass_g
-   Adelie female          3368.835616
-   Adelie   male          4043.493151
-Chinstrap female          3527.205882
-Chinstrap   male          3938.970588
-   Gentoo female          4679.741379
-   Gentoo   male          5484.836066
+  species    sex  average_body_mass
+   Adelie female            3368.84
+   Adelie   male            4043.49
+Chinstrap female            3527.21
+Chinstrap   male            3938.97
+   Gentoo female            4679.74
+   Gentoo   male            5484.84

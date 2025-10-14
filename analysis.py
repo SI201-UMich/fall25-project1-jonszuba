@@ -2,7 +2,7 @@
 # szuba@umich.edu
 # ID: 5922 7325
 # Working alone with the help of AI
-
+# Run the code, and it will generate report.txt file.
 
 
 ### beginning code
@@ -13,7 +13,7 @@ def read_penguins_data():
     df = pd.read_csv('penguins.csv')
     return df
 
-    
+### clean data    
 
 def df_clean(df):
     cols_needed = ['species', 'sex', 'body_mass_g', 'island', 'bill_length_mm', 'flipper_length_mm']
@@ -24,11 +24,10 @@ def df_clean(df):
     return df_cleaned
 
 
-
+### calculation functions
 def average_body_mass_by_species_and_sex(df):
     result = df.groupby(['species', 'sex'])['body_mass_g'].mean().reset_index()
     result = result.rename(columns={'body_mass_g': 'average_body_mass_g'})
-    # Ensure correct dtypes if result is empty
     if result.empty:
         result = pd.DataFrame({
             'species': pd.Series(dtype='object'),
@@ -37,8 +36,6 @@ def average_body_mass_by_species_and_sex(df):
         })
     return result
     
-
-
 
 
 
@@ -59,7 +56,6 @@ def correlation_bill_flipper_by_island(df):
 
 
 
-
 # generate report
 def generate_report(correlation_by_island, avg_body_mass, filename="report.txt"):
     with open(filename, "w") as f:
@@ -70,6 +66,7 @@ def generate_report(correlation_by_island, avg_body_mass, filename="report.txt")
         f.write("\nAverage Body Mass by Species and Sex:\n")
         avg_body_mass_rounded = avg_body_mass.copy()
         avg_body_mass_rounded['average_body_mass_g'] = avg_body_mass_rounded['average_body_mass_g'].round(2)
+        avg_body_mass_rounded = avg_body_mass_rounded.rename(columns={'average_body_mass_g': 'average_body_mass'})
         f.write(avg_body_mass_rounded.to_string(index=False))
         f.write("\n")
 
@@ -85,9 +82,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
 
 
 
@@ -198,10 +192,6 @@ def test_correlation_bill_flipper_by_island():
     df4 = pd.DataFrame({'island': [], 'bill_length_mm': [], 'flipper_length_mm': []})
     result4 = correlation_bill_flipper_by_island(df4)
     assert result4 == {}
-
-
-
-
 
 
 if __name__ == "__main__":
