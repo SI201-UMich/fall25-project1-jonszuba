@@ -13,17 +13,13 @@ def read_penguins_data():
     df = pd.read_csv('penguins.csv')
     return df
 
-def main():
-    filename = "penguins.csv"
-    data = read_penguins_data(filename)
-
     
 
 def df_clean(df):
     cols_needed = ['species', 'sex', 'body_mass_g', 'island', 'bill_length_mm', 'flipper_length_mm']
     df_cleaned = df.dropna(subset=cols_needed)
     for col in ['body_mass_g', 'bill_length_mm', 'flipper_length_mm']:
-        df_cleaned[col] = pd.to_numeric(df_cleaned[col], errors='coerce')
+        df_cleaned.loc[:, col] = pd.to_numeric(df_cleaned[col], errors='coerce')
     df_cleaned = df_cleaned.dropna(subset=['body_mass_g', 'bill_length_mm', 'flipper_length_mm'])
     return df_cleaned
 
@@ -64,27 +60,29 @@ def correlation_bill_flipper_by_island(df):
 
 
 
-
-def calculate_average(values):
-
-    pass
-
-
-
-
-
-
-
-
-
-def calculate_correlation(x_list, y_list):
-
-    pass
+# generate report
+def generate_report(correlation_by_island, avg_body_mass, filename="report.txt"):
+    with open(filename, "w") as f:
+        f.write("Correlation between Bill Length and Flipper Length by Island:\n")
+        for island, corr in correlation_by_island.items():
+            corr_str = f"{corr:.3f}" if corr is not None else "N/A"
+            f.write(f"  {island}: {corr_str}\n")
+        f.write("\nAverage Body Mass by Species and Sex:\n")
+        f.write(avg_body_mass.to_string(index=False))
+        f.write("\n")
 
 
+### call main
+def main():
+    df = read_penguins_data()
+    df_cleaned = df_clean(df)
+    avg_body_mass = average_body_mass_by_species_and_sex(df_cleaned)
+    correlation = correlation_bill_flipper_by_island(df_cleaned)
+    generate_report(correlation, avg_body_mass)
+    print("Report generated as report.txt")
 
-
-
+if __name__ == "__main__":
+    main()
 
 
 
