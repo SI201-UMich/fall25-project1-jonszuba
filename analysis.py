@@ -68,7 +68,9 @@ def generate_report(correlation_by_island, avg_body_mass, filename="report.txt")
             corr_str = f"{corr:.3f}" if corr is not None else "N/A"
             f.write(f"  {island}: {corr_str}\n")
         f.write("\nAverage Body Mass by Species and Sex:\n")
-        f.write(avg_body_mass.to_string(index=False))
+        avg_body_mass_rounded = avg_body_mass.copy()
+        avg_body_mass_rounded['average_body_mass_g'] = avg_body_mass_rounded['average_body_mass_g'].round(2)
+        f.write(avg_body_mass_rounded.to_string(index=False))
         f.write("\n")
 
 
