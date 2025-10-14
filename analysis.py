@@ -30,7 +30,7 @@ def average_body_mass_by_species_and_sex(df):
             result[species] = {}
         result[species][sex] = avg
     return result
-    pass
+    
 
 
 
@@ -48,8 +48,17 @@ def average_body_mass_by_species_and_sex(df):
 
 
 def correlation_bill_flipper_by_island(df):
-   
-    pass
+    grouped_correlation = df.groupby('island')
+    result = {}
+    for island, group in grouped_correlation:
+        if len(group) < 2:
+            correlation = None
+        else:
+            correlation = group['bill_length_mm'].corr(group['flipper_length_mm'])
+        result[island] = correlation
+    return result
+
+    
 
 
 
