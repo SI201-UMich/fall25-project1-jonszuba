@@ -17,6 +17,7 @@ def main():
     filename = "penguins.csv"
     data = read_penguins_data(filename)
 
+    
 
 
 
@@ -82,16 +83,8 @@ def calculate_correlation(x_list, y_list):
 
 
 
-
-import pandas as pd
-
+# Test cases for average_body_mass_by_species_and_sex
 def test_average_body_mass_by_species_and_sex():
-    data = {
-        'species': ['Adelie', 'Adelie', 'Chinstrap', 'Chinstrap', 'Gentoo'],
-        'sex': ['Male', 'Female', 'Male', 'Female', 'Male'],
-        'body_mass_g': [3700, 3450, 3800, 3700, 5000]
-    }
-    df = pd.DataFrame(data)
     # General case 1: multiple species and sexes
     data1 = {
         'species': ['Adelie', 'Adelie', 'Chinstrap', 'Chinstrap', 'Gentoo'],
@@ -138,13 +131,8 @@ def test_average_body_mass_by_species_and_sex():
     expected4 = {'Adelie': {'Male': 3750}}
     assert result4 == expected4, f"Expected {expected4}, got {result4}"
 
+# Test cases for correlation_bill_flipper_by_island
 def test_correlation_bill_flipper_by_island():
-    data = {
-        'island': ['Torgersen', 'Torgersen', 'Biscoe', 'Biscoe'],
-        'bill_length_mm': [39.1, 40.3, 46.5, 45.4],
-        'flipper_length_mm': [181, 186, 211, 217]
-    }
-    df = pd.DataFrame(data)
     # General case 1: two islands, two points each
     data1 = {
         'island': ['Torgersen', 'Torgersen', 'Biscoe', 'Biscoe'],
@@ -174,7 +162,6 @@ def test_correlation_bill_flipper_by_island():
     }
     df3 = pd.DataFrame(data3)
     result3 = correlation_bill_flipper_by_island(df3)
-    # Correlation undefined for one point, expect None or similar
     assert result3['Biscoe'] is None
 
     # Edge case 2: empty DataFrame
@@ -184,11 +171,12 @@ def test_correlation_bill_flipper_by_island():
 
 
 
+
+
+
 if __name__ == "__main__":
     test_average_body_mass_by_species_and_sex()
     test_correlation_bill_flipper_by_island()
-    test_calculate_average()
-    test_calculate_correlation()
     print("All tests passed.")
 
 
