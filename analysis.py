@@ -23,7 +23,13 @@ def main():
 
 
 def average_body_mass_by_species_and_sex(df):
-
+    grouped_avg = df.groupby(['species', 'sex'])['body_mass_g'].mean()
+    result = {}
+    for (species, sex), avg in grouped_avg.items():
+        if species not in result:
+            result[species] = {}
+        result[species][sex] = avg
+    return result
     pass
 
 
