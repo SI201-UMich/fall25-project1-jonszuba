@@ -19,29 +19,23 @@ def main():
 
     
 
+def df_clean(df):
+    cols_needed = ['species', 'sex', 'body_mass_g', 'island', 'bill_length_mm', 'flipper_length_mm']
+    df_cleaned = df.dropna(subset=cols_needed)
+    for col in ['body_mass_g', 'bill_length_mm', 'flipper_length_mm']:
+        df_cleaned[col] = pd.to_numeric(df_cleaned[col], errors='coerce')
+    df_cleaned = df_cleaned.dropna(subset=['body_mass_g', 'bill_length_mm', 'flipper_length_mm'])
+    return df_cleaned
 
 
 
 def average_body_mass_by_species_and_sex(df):
     grouped_avg = df.groupby(['species', 'sex'])['body_mass_g'].mean()
     result = {}
-    for (species, sex), avg in grouped_avg.items():
-        if species not in result:
-            result[species] = {}
-        result[species][sex] = avg
+    result = df.groupby(['species', 'sex'])['body_mass_g'].mean().reset_index()
+    result = result.rename(columns={'body_mass_g': 'average_body_mass_g'})
     return result
     
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -66,14 +60,11 @@ def correlation_bill_flipper_by_island(df):
 
 
 
-
-
-
-
-
 def calculate_average(values):
-  
+
     pass
+
+
 
 
 
@@ -107,13 +98,17 @@ def test_average_body_mass_by_species_and_sex():
         'body_mass_g': [3700, 3450, 3800, 3700, 5000]
     }
     df1 = pd.DataFrame(data1)
+
     result1 = average_body_mass_by_species_and_sex(df1)
-    expected1 = {
-        'Adelie': {'Male': 3700, 'Female': 3450},
-        'Chinstrap': {'Male': 3800, 'Female': 3700},
-        'Gentoo': {'Male': 5000}
-    }
-    assert result1 == expected1, f"Expected {expected1}, got {result1}"
+    expected1 = pd.DataFrame({
+        'species': ['Adelie', 'Adelie', 'Chinstrap', 'Chinstrap', 'Gentoo'],
+        'sex': ['Male', 'Female', 'Male', 'Female', 'Male'],
+        'average_body_mass_g': [3700, 3450, 3800, 3700, 5000]
+    })
+    pd.testing.assert_frame_equal(
+        result1.sort_values(['species', 'sex']).reset_index(drop=True),
+        expected1.sort_values(['species', 'sex']).reset_index(drop=True)
+    )
 
     # General case 2: multiple entries per group
     data2 = {
@@ -122,20 +117,27 @@ def test_average_body_mass_by_species_and_sex():
         'body_mass_g': [3700, 3600, 3450, 3700]
     }
     df2 = pd.DataFrame(data2)
+
     result2 = average_body_mass_by_species_and_sex(df2)
-    expected2 = {
-        'Adelie': {'Male': 3650, 'Female': 3450},
-        'Chinstrap': {'Female': 3700}
-    }
-    assert result2 == expected2, f"Expected {expected2}, got {result2}"
+    expected2 = pd.DataFrame({
+        'species': ['Adelie', 'Adelie', 'Chinstrap'],
+        'sex': ['Male', 'Female', 'Female'],
+        'average_body_mass_g': [3650, 3450, 3700]
+    })
+    pd.testing.assert_frame_equal(
+        result2.sort_values(['species', 'sex']).reset_index(drop=True),
+        expected2.sort_values(['species', 'sex']).reset_index(drop=True)
+    )
 
     # Edge case 1: empty DataFrame
+
     df3 = pd.DataFrame({'species': [], 'sex': [], 'body_mass_g': []})
     result3 = average_body_mass_by_species_and_sex(df3)
-    expected3 = {}
-    assert result3 == expected3, f"Expected {expected3}, got {result3}"
+    expected3 = pd.DataFrame(columns=['species', 'sex', 'average_body_mass_g'])
+    pd.testing.assert_frame_equal(result3, expected3)
 
     # Edge case 2: only one group
+
     data4 = {
         'species': ['Adelie', 'Adelie'],
         'sex': ['Male', 'Male'],
@@ -143,8 +145,12 @@ def test_average_body_mass_by_species_and_sex():
     }
     df4 = pd.DataFrame(data4)
     result4 = average_body_mass_by_species_and_sex(df4)
-    expected4 = {'Adelie': {'Male': 3750}}
-    assert result4 == expected4, f"Expected {expected4}, got {result4}"
+    expected4 = pd.DataFrame({
+        'species': ['Adelie'],
+        'sex': ['Male'],
+        'average_body_mass_g': [3750.0]
+    })
+    pd.testing.assert_frame_equal(result4.reset_index(drop=True), expected4)
 
 # Test cases for correlation_bill_flipper_by_island
 def test_correlation_bill_flipper_by_island():
