@@ -1,7 +1,8 @@
 # Jonathon Szuba
 # szuba@umich.edu
 # ID: 5922 7325
-# Working alone with the help of AI
+# Working alone with the help of AI. 
+# Used AI to help debug test cases, and for general structure of the functions. It recommened I use pandas, which made everything alot easier.
 # Run the code, and it will generate report.txt file.
 
 
@@ -13,8 +14,8 @@ def read_penguins_data():
     df = pd.read_csv('penguins.csv')
     return df
 
-### clean data    
 
+### clean data    
 def df_clean(df):
     cols_needed = ['species', 'sex', 'body_mass_g', 'island', 'bill_length_mm', 'flipper_length_mm']
     df_cleaned = df.dropna(subset=cols_needed)
